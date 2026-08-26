@@ -1,0 +1,17 @@
+flutter create --platforms=android,ios,web --project-name=aurenza .
+flutter pub get
+test -d android
+test -f ios/Runner.xcodeproj/project.pbxproj
+test -d web
+git add android ios web
+git commit -m "chore: add Flutter Android iOS and Web platforms"
+git push origin main
+git clone https://github.com/asianubongudofia2-hue/AURENZA.git
+cd AURENZA
+flutter create --platforms=android,ios,web --project-name=aurenza .
+test -d android && echo "ANDROID OK"
+test -f ios/Runner.xcodeproj/project.pbxproj && echo "IOS OK"
+test -d web && echo "WEB OK"
+git add android ios web
+git commit -m "chore: add Flutter Android iOS Web platforms"
+git push origin main
