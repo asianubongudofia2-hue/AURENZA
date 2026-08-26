@@ -41,7 +41,6 @@ EOF
 json_key_file "/tmp/google_play.json"
 package_name "com.example.aurenza"
 EOF
-            # You must add Fastlane configuration (Fastfile) or customize this step to your workflow.
             echo "Google Play service account decoded to /tmp/google_play.json — configure fastlane to publish."
           else
             echo "No Google Play service account provided — skipping publish."
