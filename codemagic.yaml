@@ -1,25 +1,9 @@
-# Codemagic CI configuration for AURENZA (updated)
-# This workflow regenerates platform folders (flutter create .), installs dependencies,
-# builds Android (APK + AAB), iOS (unsigned IPA), and Web artifacts, and includes
-# placeholders for Android signing and optional publishing to Google Play / Firebase.
-
 workflows:
   android:
     name: Android (APK + AAB)
     environment:
       flutter: stable
       vars:
-        # Option 1: Upload the keystore file in Codemagic (Files) and reference it as ANDROID_KEYSTORE_FILE
-        # Option 2: Store the keystore as a base64-encoded env var ANDROID_KEYSTORE_BASE64
-        # Required variables (choose your approach and set them in Codemagic UI):
-        # - KEYSTORE_PASSWORD
-        # - KEY_ALIAS
-        # - KEY_PASSWORD
-        # - (optional) ANDROID_KEYSTORE_BASE64
-        # - (optional) ANDROID_KEYSTORE_FILE
-        # For Google Play publishing (optional):
-        # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (base64)
-        # - GOOGLE_PLAY_TRACK (e.g., internal)
     scripts:
       - name: Get dependencies
         script: |
