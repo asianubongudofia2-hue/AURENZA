@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_strategy/url_strategy.dart';
+
+import 'screens/users_list.dart';
+import 'screens/user_detail.dart';
 
 void main() {
+  // Remove the hash (#) from Flutter web URLs
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -9,28 +16,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final GoRouter _router = GoRouter(
+      initialLocation: '/users',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const UsersList(),
+        ),
+        GoRoute(
+          path: '/users',
+          name: 'users',
+          builder: (context, state) => const UsersList(),
+        ),
+        GoRoute(
+          path: '/users/:id',
+          name: 'user_detail',
+          builder: (context, state) {
+            final id = state.params['id']!;
+            return UserDetail(userId: int.parse(id));
+          },
+        ),
+      ],
+      errorBuilder: (context, state) => Scaffold(
+        appBar: AppBar(title: const Text('AURENZA')),
+        body: Center(child: Text(state.error.toString())),
+      ),
+    );
+
+    return MaterialApp.router(
       title: 'AURENZA',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('AURENZA'),
-      ),
-      body: const Center(
-        child: Text('Hello, AURENZA!', style: TextStyle(fontSize: 20)),
-      ),
+      routerConfig: _router,
     );
   }
 }
