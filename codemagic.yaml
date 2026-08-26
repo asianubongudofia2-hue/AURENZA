@@ -14,17 +14,7 @@ workflows:
       - name: Prepare Android signing (if keystore provided)
         script: |
           set -e
-          # If keystore provided as base64 env var, decode and place it
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/keystore.jks
-          fi
-
-          # If Codemagic Files area provides ANDROID_KEYSTORE_FILE, copy it
-          if [ -n "$ANDROID_KEYSTORE_FILE" ] && [ -f "$ANDROID_KEYSTORE_FILE" ]; then
-            cp "$ANDROID_KEYSTORE_FILE" android/app/keystore.jks
-          fi
-
-          if [ -f android/app/keystore.jks ]; then
+               if [ -f android/app/keystore.jks ]; then
             cat > android/key.properties <<EOF
 storePassword=$KEYSTORE_PASSWORD
 keyPassword=$KEY_PASSWORD
