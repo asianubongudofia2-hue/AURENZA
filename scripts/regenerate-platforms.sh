@@ -29,6 +29,16 @@ flutter create .
 
 echo "Done. Platform folders regenerated. If you had custom native changes, review the ${d}.bak folders."
 
+regenerate-platforms.sh
+        ↓
+android/ + ios/ + web/
+        ↓
+flutter pub get
+        ↓
+flutter build apk
+        ↓
+iOS/Web builds
+
 bash scripts/regenerate-platforms.sh
 test -d android
 test -f ios/Runner.xcodeproj/project.pbxproj
