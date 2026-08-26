@@ -1,6 +1,10 @@
-
 flutter create 
 --platforms=android,ios,web --project-name=aurenza .
 git add android ios web
 git commit -m "chore: add Flutter platform projects"
 git push origin main
+android/
+ios/
+web/
+pubspec.yaml
+lib/
