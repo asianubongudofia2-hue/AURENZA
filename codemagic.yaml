@@ -36,11 +36,6 @@ EOF
         script: |
           if [ -n "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" ]; then
             echo "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" | base64 --decode > /tmp/google_play.json
-            mkdir -p android/fastlane
-            cat > android/fastlane/Appfile <<EOF
-json_key_file "/tmp/google_play.json"
-package_name "com.example.aurenza"
-EOF
             echo "Google Play service account decoded to /tmp/google_play.json — configure fastlane to publish."
           else
             echo "No Google Play service account provided — skipping publish."
