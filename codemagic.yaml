@@ -57,11 +57,6 @@ EOF
     environment:
       flutter: stable
       cocoapods: default
-      vars:
-        # For iOS signing, upload certificate & provisioning profile in Codemagic UI or use an App Store Connect API key
-        # - APP_STORE_CONNECT_KEY_ID
-        # - APP_STORE_CONNECT_ISSUER_ID
-        # - APP_STORE_CONNECT_PRIVATE_KEY (base64)
     scripts:
       - name: Get dependencies
         script: |
@@ -71,8 +66,6 @@ EOF
           flutter create .
       - name: Build iOS (no codesign)
         script: |
-          # Build an unsigned iOS archive. Signing must be done later in Xcode or via Codemagic code signing.
-          flutter build ios --release --no-codesign
       - name: Export IPA (placeholder)
         script: |
           echo "If you want an IPA exported, configure code signing in Codemagic and replace this step with xcodebuild export commands or use Codemagic's automatic Export IPA step."
