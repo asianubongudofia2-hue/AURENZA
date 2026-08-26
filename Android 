@@ -1,0 +1,23 @@
+workflows:
+  android:
+    name: Android (APK + AAB)
+    environment:
+      flutter: stable
+    scripts:
+      - name: Get dependencies
+        script: |
+          flutter pub get
+      - name: Regenerate platforms
+        script: |
+          flutter create .
+      - name: Build release APK
+        script: |
+          flutter build apk --release
+      - name: Build app bundle
+        script: |
+          flutter build appbundle --release
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+    publishing:
+      email: false
