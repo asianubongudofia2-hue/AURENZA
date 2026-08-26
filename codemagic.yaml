@@ -1,0 +1,79 @@
+# Codemagic CI configuration for AURENZA
+# This workflow regenerates platform folders (flutter create .), installs dependencies,
+# and builds Android (APK + AAB), iOS (unsigned IPA), and Web artifacts.
+
+workflows:
+  android:
+    name: Android (APK + AAB)
+    environment:
+      flutter: stable
+    scripts:
+      - name: Get dependencies
+        script: |
+          flutter pub get
+      - name: Regenerate platforms
+        script: |
+          flutter create .
+      - name: Build release APK
+        script: |
+          flutter build apk --release
+      - name: Build app bundle (AAB)
+        script: |
+          flutter build appbundle --release
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+    publishing:
+      email: false
+
+  ios:
+    name: iOS (unsigned IPA)
+    environment:
+      flutter: stable
+      cocoapods: default
+    scripts:
+      - name: Get dependencies
+        script: |
+          flutter pub get
+      - name: Regenerate platforms
+        script: |
+          flutter create .
+      - name: Build iOS (no codesign)
+        script: |
+          # Build an unsigned iOS archive. Signing must be done later in Xcode or via Codemagic code signing.
+          flutter build ios --release --no-codesign
+      - name: Export IPA (placeholder)
+        script: |
+          echo "If you want an IPA exported, configure code signing in Codemagic and replace this step with xcodebuild export commands or use Codemagic's automatic Export IPA step."
+    artifacts:
+      - build/ios/iphoneos/*.app
+      - build/ios/ipa/*.ipa
+    publishing:
+      email: false
+    # Note: Configure code_signing in the Codemagic UI to sign and export IPA.
+
+  web:
+    name: Web (build)
+    environment:
+      flutter: stable
+    scripts:
+      - name: Get dependencies
+        script: |
+          flutter pub get
+      - name: Regenerate platforms
+        script: |
+          flutter create .
+      - name: Build web
+        script: |
+          flutter build web --release
+    artifacts:
+      - build/web/**
+    publishing:
+      email: false
+
+# Placeholders for Android signing (upload keystore to Codemagic and set env vars):
+# - File: ANDROID_KEYSTORE (upload the keystore file in Codemagic UI)
+# - Variables: KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+
+# Placeholders for iOS signing: upload Distribution Certificate and Provisioning Profile
+# or configure App Store Connect API key in Codemagic UI.

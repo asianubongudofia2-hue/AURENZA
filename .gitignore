@@ -1,0 +1,32 @@
+# Flutter/Dart/Git ignores
+
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+.idea/
+.vscode/
+*.iml
+
+# Android
+**/android/local.properties
+**/android/.gradle
+**/android/app/*.keystore
+
+# iOS
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Podfile.lock
+**/ios/Pods/
+**/ios/Runner.xcworkspace/
+
+# Web
+build/web/
+
+# Misc
+.DS_Store
+.env
