@@ -1,12 +1,25 @@
-# Codemagic CI configuration for AURENZA
+# Codemagic CI configuration for AURENZA (updated)
 # This workflow regenerates platform folders (flutter create .), installs dependencies,
-# and builds Android (APK + AAB), iOS (unsigned IPA), and Web artifacts.
+# builds Android (APK + AAB), iOS (unsigned IPA), and Web artifacts, and includes
+# placeholders for Android signing and optional publishing to Google Play / Firebase.
 
 workflows:
   android:
     name: Android (APK + AAB)
     environment:
       flutter: stable
+      vars:
+        # Option 1: Upload the keystore file in Codemagic (Files) and reference it as ANDROID_KEYSTORE_FILE
+        # Option 2: Store the keystore as a base64-encoded env var ANDROID_KEYSTORE_BASE64
+        # Required variables (choose your approach and set them in Codemagic UI):
+        # - KEYSTORE_PASSWORD
+        # - KEY_ALIAS
+        # - KEY_PASSWORD
+        # - (optional) ANDROID_KEYSTORE_BASE64
+        # - (optional) ANDROID_KEYSTORE_FILE
+        # For Google Play publishing (optional):
+        # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (base64)
+        # - GOOGLE_PLAY_TRACK (e.g., internal)
     scripts:
       - name: Get dependencies
         script: |
@@ -14,12 +27,51 @@ workflows:
       - name: Regenerate platforms
         script: |
           flutter create .
+      - name: Prepare Android signing (if keystore provided)
+        script: |
+          set -e
+          # If keystore provided as base64 env var, decode and place it
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/keystore.jks
+          fi
+
+          # If Codemagic Files area provides ANDROID_KEYSTORE_FILE, copy it
+          if [ -n "$ANDROID_KEYSTORE_FILE" ] && [ -f "$ANDROID_KEYSTORE_FILE" ]; then
+            cp "$ANDROID_KEYSTORE_FILE" android/app/keystore.jks
+          fi
+
+          if [ -f android/app/keystore.jks ]; then
+            cat > android/key.properties <<EOF
+storePassword=$KEYSTORE_PASSWORD
+keyPassword=$KEY_PASSWORD
+keyAlias=$KEY_ALIAS
+storeFile=keystore.jks
+EOF
+            mv android/key.properties android/app/
+            echo "Android keystore configured."
+          else
+            echo "No keystore found — builds will be unsigned. To sign, upload a keystore or set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_FILE in Codemagic."
+          fi
       - name: Build release APK
         script: |
           flutter build apk --release
       - name: Build app bundle (AAB)
         script: |
           flutter build appbundle --release
+      - name: (optional) Publish to Google Play via fastlane
+        script: |
+          if [ -n "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" | base64 --decode > /tmp/google_play.json
+            mkdir -p android/fastlane
+            cat > android/fastlane/Appfile <<EOF
+json_key_file "/tmp/google_play.json"
+package_name "com.example.aurenza"
+EOF
+            # You must add Fastlane configuration (Fastfile) or customize this step to your workflow.
+            echo "Google Play service account decoded to /tmp/google_play.json — configure fastlane to publish."
+          else
+            echo "No Google Play service account provided — skipping publish."
+          fi
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
       - build/app/outputs/bundle/release/*.aab
@@ -31,6 +83,11 @@ workflows:
     environment:
       flutter: stable
       cocoapods: default
+      vars:
+        # For iOS signing, upload certificate & provisioning profile in Codemagic UI or use an App Store Connect API key
+        # - APP_STORE_CONNECT_KEY_ID
+        # - APP_STORE_CONNECT_ISSUER_ID
+        # - APP_STORE_CONNECT_PRIVATE_KEY (base64)
     scripts:
       - name: Get dependencies
         script: |
@@ -50,7 +107,6 @@ workflows:
       - build/ios/ipa/*.ipa
     publishing:
       email: false
-    # Note: Configure code_signing in the Codemagic UI to sign and export IPA.
 
   web:
     name: Web (build)
@@ -66,14 +122,29 @@ workflows:
       - name: Build web
         script: |
           flutter build web --release
+      - name: (optional) Publish web to Firebase Hosting
+        script: |
+          if [ -n "$FIREBASE_TOKEN" ]; then
+            echo "Publishing web to Firebase Hosting"
+            # Install firebase tools
+            npm install -g firebase-tools
+            firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+          else
+            echo "No FIREBASE_TOKEN configured — skipping Firebase Hosting deploy."
+          fi
     artifacts:
       - build/web/**
     publishing:
       email: false
 
-# Placeholders for Android signing (upload keystore to Codemagic and set env vars):
-# - File: ANDROID_KEYSTORE (upload the keystore file in Codemagic UI)
-# - Variables: KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
-
-# Placeholders for iOS signing: upload Distribution Certificate and Provisioning Profile
-# or configure App Store Connect API key in Codemagic UI.
+# Notes for Codemagic setup:
+# 1) Android keystore approaches:
+#    - Upload keystore file in Codemagic (Files) and set ANDROID_KEYSTORE_FILE to its path.
+#    - Or set ANDROID_KEYSTORE_BASE64 with the base64-encoded keystore contents.
+#    Also set KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD.
+# 2) iOS signing:
+#    Upload distribution certificate and provisioning profile in Codemagic's Code Signing settings,
+#    or configure App Store Connect API key variables.
+# 3) Publishing:
+#    - Google Play: provide GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (base64) and configure fastlane.
+#    - Firebase Hosting/App Distribution: provide FIREBASE_TOKEN (CI token) or service account JSON.
