@@ -15,4 +15,4 @@ ios:
     code_signing:
       # Configure these in Codemagic UI (encrypted environment variables / code signing configuration)
       # distribution_certificate: Encrypted(...)
-      # provisioning_profile: Encrypted(...)
+      # provisioning_profile: Encrypted(...) 
