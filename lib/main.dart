@@ -7,6 +7,9 @@ import 'screens/user_detail.dart';
 import 'screens/admin/admin_dashboard.dart';
 import 'screens/admin/admin_users_list.dart';
 import 'screens/admin/admin_user_detail.dart';
+import 'screens/support/support_dashboard.dart';
+import 'screens/support/support_tickets_list.dart';
+import 'screens/support/support_ticket_detail.dart';
 
 void main() {
   // Remove the hash (#) from Flutter web URLs
@@ -56,6 +59,27 @@ class MyApp extends StatelessWidget {
               builder: (context, state) {
                 final id = state.params['id']!;
                 return AdminUserDetail(userId: int.parse(id));
+              },
+            ),
+          ],
+        ),
+        // Support section with nested routes
+        GoRoute(
+          path: '/support',
+          name: 'support',
+          builder: (context, state) => const SupportDashboard(),
+          routes: [
+            GoRoute(
+              path: 'tickets',
+              name: 'support_tickets',
+              builder: (context, state) => const SupportTicketsList(),
+            ),
+            GoRoute(
+              path: 'tickets/:id',
+              name: 'support_ticket_detail',
+              builder: (context, state) {
+                final id = state.params['id']!;
+                return SupportTicketDetail(ticketId: int.parse(id));
               },
             ),
           ],

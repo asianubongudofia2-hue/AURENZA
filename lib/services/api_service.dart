@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
+import '../models/ticket.dart';
 
 class ApiService {
   // Default to jsonplaceholder; replace with your real API base URL if available.
@@ -25,6 +26,29 @@ class ApiService {
       return User.fromJson(body);
     } else {
       throw Exception('Failed to load user $id: ${res.statusCode}');
+    }
+  }
+
+  // Support tickets (using posts as a mock for tickets)
+  static Future<List<Ticket>> fetchTickets() async {
+    final uri = Uri.parse('$_baseUrl/posts');
+    final res = await http.get(uri);
+    if (res.statusCode == 200) {
+      final List<dynamic> body = json.decode(res.body);
+      return body.map((e) => Ticket.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load tickets: ${res.statusCode}');
+    }
+  }
+
+  static Future<Ticket> fetchTicketById(int id) async {
+    final uri = Uri.parse('$_baseUrl/posts/$id');
+    final res = await http.get(uri);
+    if (res.statusCode == 200) {
+      final Map<String, dynamic> body = json.decode(res.body);
+      return Ticket.fromJson(body);
+    } else {
+      throw Exception('Failed to load ticket $id: ${res.statusCode}');
     }
   }
 }
