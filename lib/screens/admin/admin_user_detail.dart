@@ -3,15 +3,15 @@ import '../models/user.dart';
 import '../services/api_service.dart';
 import 'package:go_router/go_router.dart';
 
-class UserDetail extends StatefulWidget {
+class AdminUserDetail extends StatefulWidget {
   final int userId;
-  const UserDetail({super.key, required this.userId});
+  const AdminUserDetail({super.key, required this.userId});
 
   @override
-  State<UserDetail> createState() => _UserDetailState();
+  State<AdminUserDetail> createState() => _AdminUserDetailState();
 }
 
-class _UserDetailState extends State<UserDetail> {
+class _AdminUserDetailState extends State<AdminUserDetail> {
   late Future<User> _futureUser;
 
   @override
@@ -24,7 +24,7 @@ class _UserDetailState extends State<UserDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Detail'),
+        title: const Text('Admin — User Detail'),
       ),
       body: FutureBuilder<User>(
         future: _futureUser,

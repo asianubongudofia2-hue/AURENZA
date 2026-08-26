@@ -4,6 +4,9 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'screens/users_list.dart';
 import 'screens/user_detail.dart';
+import 'screens/admin/admin_dashboard.dart';
+import 'screens/admin/admin_users_list.dart';
+import 'screens/admin/admin_user_detail.dart';
 
 void main() {
   // Remove the hash (#) from Flutter web URLs
@@ -35,6 +38,27 @@ class MyApp extends StatelessWidget {
             final id = state.params['id']!;
             return UserDetail(userId: int.parse(id));
           },
+        ),
+        // Admin section with nested routes
+        GoRoute(
+          path: '/admin',
+          name: 'admin',
+          builder: (context, state) => const AdminDashboard(),
+          routes: [
+            GoRoute(
+              path: 'users',
+              name: 'admin_users',
+              builder: (context, state) => const AdminUsersList(),
+            ),
+            GoRoute(
+              path: 'users/:id',
+              name: 'admin_user_detail',
+              builder: (context, state) {
+                final id = state.params['id']!;
+                return AdminUserDetail(userId: int.parse(id));
+              },
+            ),
+          ],
         ),
       ],
       errorBuilder: (context, state) => Scaffold(
