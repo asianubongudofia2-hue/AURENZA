@@ -1,82 +1,10 @@
-Do you want a quick getting‑started guide, a deeper SvelteKit app walkthrough (routing/SSR), or help migrating from another framework?
-
-Quick getting‑started (recommended: SvelteKit for full web apps)
-- Prereqs: Node (16+; 18+ recommended), npm/pnpm/yarn.
-- Create a new SvelteKit app:
-  - npm create svelte@latest my-app
-  - cd my-app
-  - npm install
-  - npm run dev
-  - Open the dev server (usually http://localhost:5173).
-  (If you only want a single‑page Svelte app instead of SvelteKit, use: npm init vite@latest my-app -- --template svelte)
-
-Core Svelte concepts (fast overview)
-- Components: .svelte files contain <script>, markup, and <style> in one file.
-- Props: export let name;
-- Reactivity:
-  - Reactive assignments: $: doubled = count * 2
-  - Reactive stores: import { writable } from 'svelte/store'; use $storeName in templates
-- Event binding: <button on:click={handleClick}>Click</button>
-- Two‑way binding: <input bind:value={value} />
-- Conditionals & loops: {#if ...}{:else}{/if}, {#each items as item}{/each}
-- Lifecycle: import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
-- Transitions/animations: import { fade, fly } from 'svelte/transition' and use in:fade
-
-Tiny example (Counter.svelte)
-<script>
-  export let initial = 0;
-  let count = initial;
-  function inc() { count += 1; }
-  $: doubled = count * 2;
-</script>
-
-<button on:click={inc}>
-  Count: {count} — double: {doubled}
-</button>
-
-Using stores
-<script>
-  import { writable } from 'svelte/store';
-  export const user = writable(null);
-</script>
-In components read/write with $user.
-
-SvelteKit: recommended for web apps
-- File‑based routing: src/routes/+page.svelte for pages, dynamic routes with [id].
-- Layouts: +layout.svelte for shared UI.
-- Data loading: +page.server.js/ts or +page.js/ts with load() functions (server/client contexts).
-- SSR, CSR, SSG/prerendering supported.
-- Adapters for deployment: adapter-vercel, adapter-netlify, adapter-static, etc.
-- Build: npm run build, then deploy using your chosen adapter/hosting.
-
-Build & deploy
-- Build: npm run build
-- Use SvelteKit adapters or build static with adapter-static.
-- Common hosts: Vercel, Netlify, Cloudflare Pages, static CDNs.
-
-Tooling & testing
-- TypeScript support built in (choose at project init)
-- Use Vitest for unit tests, Playwright or Cypress for e2e
-- Linting/formatting: ESLint + Prettier or community configs
-
-Libraries & ecosystem
-- Component libraries: Svelte Material UI, Carbon for Svelte, Flowbite‑Svelte, etc.
-- Router for SPA only apps: svelte-spa-router (but SvelteKit covers routing for most apps)
-- UI & animation helpers in svelte/transition and svelte/motion
-
-Tips & best practices
-- Prefer SvelteKit for full apps (routing, SSR, endpoints).
-- Keep component state local; use stores for cross‑component shared state.
-- Use file‑based routing and +layout for consistent page chrome.
-- Profile and trust Svelte’s compile‑time optimizations — fewer re-renders than VDOM frameworks.
-
-Resources
-- Official docs: svelte.dev (language) and kit.svelte.dev (SvelteKit)
-- Svelte REPL for prototyping components quickly
-
-If you tell me which of the following you want, I’ll give a tailored next step:
-- A step‑by‑step SvelteKit app tutorial with example repo
-- A simple SPA example (Vite + Svelte) and how to add routing
-- Migration advice from React/Vue and code snippets
-
-— GitHub Copilot Chat Assistant
+web:
+    name: Web
+    environment:
+      flutter: stable
+    scripts:
+      - flutter pub get
+      - flutter create .
+      - flutter build web --release
+    artifacts:
+      - build/web/**
