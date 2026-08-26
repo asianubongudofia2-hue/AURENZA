@@ -136,15 +136,3 @@ EOF
       - build/web/**
     publishing:
       email: false
-
-# Notes for Codemagic setup:
-# 1) Android keystore approaches:
-#    - Upload keystore file in Codemagic (Files) and set ANDROID_KEYSTORE_FILE to its path.
-#    - Or set ANDROID_KEYSTORE_BASE64 with the base64-encoded keystore contents.
-#    Also set KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD.
-# 2) iOS signing:
-#    Upload distribution certificate and provisioning profile in Codemagic's Code Signing settings,
-#    or configure App Store Connect API key variables.
-# 3) Publishing:
-#    - Google Play: provide GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (base64) and configure fastlane.
-#    - Firebase Hosting/App Distribution: provide FIREBASE_TOKEN (CI token) or service account JSON.
