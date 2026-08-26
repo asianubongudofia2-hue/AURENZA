@@ -34,3 +34,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+bash scripts/regenerate-platforms.sh
+git add android ios web
+git commit -m "chore: add Flutter Android iOS Web platforms"
+git push origin main
