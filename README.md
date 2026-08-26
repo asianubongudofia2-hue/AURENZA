@@ -1,4 +1,68 @@
 # AURENZA
+Yes. This error is different, and it tells us the previous workaround was placed at the wrong stage.
+
+Failed to install dependencies for pubspec file in /Users/builder/clone.
+Directory was not found
+
+Codemagic is trying to run flutter pub get before our script has created the Flutter project/platform files.
+
+Fix the workflow order
+
+In Codemagic, turn off the automatic dependency-install step if the Workflow Editor allows it, and make the first custom script:
+
+cd "$CM_BUILD_DIR"
+
+if [ ! -f pubspec.yaml ]; then
+  echo "ERROR: pubspec.yaml not found"
+  exit 1
+fi
+
+if [ ! -d android ] || [ ! -d ios ] || [ ! -d web ]; then
+  flutter create --platforms=android,ios,web --project-name=aurenza .
+fi
+
+flutter pub get
+
+Then the build scripts:
+
+flutter build apk --debug
+
+For web:
+
+flutter build web
+
+For iOS, the first validation can be:
+
+flutter build ios --no-codesign
+
+Critical point
+
+The repository must be checked out at:
+
+/Users/builder/clone
+
+and pubspec.yaml must be directly inside it.
+
+We should not run flutter create "$CM_BUILD_DIR" because that can create/overwrite project configuration incorrectly. Running:
+
+cd "$CM_BUILD_DIR"
+flutter create --platforms=android,ios,web --project-name=aurenza .
+
+is the safer approach because it generates the missing platform folders inside the existing Flutter project.
+
+After changing the workflow, start a fresh Codemagic build. The first important output should be:
+
+flutter create --platforms=android,ios,web --project-name=aurenza .
+
+followed by:
+
+flutter pub get
+
+and then:
+
+flutter build apk --debug
+
+Don't trigger the webhook again until this workflow is corrected.
 Atlas-Funded/
 ├── lib/
 ├── pubspec.yaml
