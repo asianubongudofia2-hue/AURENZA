@@ -1,30 +1,19 @@
-// Helper script to (re)generate Flutter platform folders safely.
-// Run from the repository root: ./scripts/regenerate-platforms.sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
+# Only generate platforms that are missing to avoid overwriting native code
+MISSING=()
+[ ! -d android ] && MISSING+=("android")
+[ ! -d ios ] && MISSING+=("ios")
+[ ! -d web ] && MISSING+=("web")
 
-if ! command -v flutter >/dev/null 2>&1; then
-  echo "Error: flutter command not found. Install Flutter SDK and ensure it's on PATH."
-  exit 1
+if [ ${#MISSING[@]} -eq 0 ]; then
+  echo "All platforms present — nothing to do."
+  exit 0
 fi
 
-echo "Using Flutter:" 
-flutter --version
+echo "Generating missing Flutter platform(s): ${MISSING[*]}"
+# Generate only the missing platforms. This will add platform scaffolding without overwriting existing native code.
+flutter create --platforms=$(IFS=,; echo "${MISSING[*]}") .
 
-echo "Running flutter pub get"
-flutter pub get
-
-# Regenerate platform folders in-place. This will NOT overwrite existing native files
-# unless Flutter decides to. Back up native folders first.
-for d in android ios web; do
-  if [ -d "$d" ]; then
-    echo "Backing up existing $d to ${d}.bak"
-    rm -rf "${d}.bak"
-    cp -R "$d" "${d}.bak"
-  fi
-done
-
-# Create project files and platform directories
-flutter create .
-
-echo "Done. Platform folders regenerated. If you had custom native changes, review the ${d}.bak folders."
+echo "Platform generation complete."

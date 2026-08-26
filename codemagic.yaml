@@ -21,12 +21,13 @@ workflows:
         # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (base64)
         # - GOOGLE_PLAY_TRACK (e.g., internal)
     scripts:
+      - name: Regenerate platforms
+        script: |
+          chmod +x ./scripts/regenerate-platforms.sh
+          ./scripts/regenerate-platforms.sh
       - name: Get dependencies
         script: |
           flutter pub get
-      - name: Regenerate platforms
-        script: |
-          flutter create .
       - name: Prepare Android signing (if keystore provided)
         script: |
           set -e
@@ -89,12 +90,13 @@ EOF
         # - APP_STORE_CONNECT_ISSUER_ID
         # - APP_STORE_CONNECT_PRIVATE_KEY (base64)
     scripts:
+      - name: Regenerate platforms
+        script: |
+          chmod +x ./scripts/regenerate-platforms.sh
+          ./scripts/regenerate-platforms.sh
       - name: Get dependencies
         script: |
           flutter pub get
-      - name: Regenerate platforms
-        script: |
-          flutter create .
       - name: Build iOS (no codesign)
         script: |
           # Build an unsigned iOS archive. Signing must be done later in Xcode or via Codemagic code signing.
@@ -113,12 +115,13 @@ EOF
     environment:
       flutter: stable
     scripts:
+      - name: Regenerate platforms
+        script: |
+          chmod +x ./scripts/regenerate-platforms.sh
+          ./scripts/regenerate-platforms.sh
       - name: Get dependencies
         script: |
           flutter pub get
-      - name: Regenerate platforms
-        script: |
-          flutter create .
       - name: Build web
         script: |
           flutter build web --release
